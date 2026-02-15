@@ -1,0 +1,51 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background-color: #0f0f0f;
+    color: #fff;
+    font-family: 'Inter', sans-serif;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.reveal-container {
+    padding-bottom: 5px;
+    /* This clip-path acts as the "window" through which the text appears */
+    clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+}
+
+h1.reveal-text {
+    font-size: 5rem;
+    font-weight: 600;
+    line-height: 1;
+    letter-spacing: -0.02em;
+    /* Initial state: pushed down below the mask */
+    transform: translateY(120%);
+    opacity: 0;
+}
+
+p.reveal-text.subtext {
+    font-size: 1.2rem;
+    font-weight: 300;
+    color: #8f8f8f;
+    margin-top: 1rem;
+    /* Initial state: pushed down below the mask */
+    transform: translateY(120%);
+    opacity: 0;
+}

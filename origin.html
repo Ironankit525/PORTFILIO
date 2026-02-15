@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Exo Ape - Seamless Infinite Portfolio</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap');
+
+        :root {
+            --bg-color: #0d0d0d;
+            --text-color: #ffffff;
+        }
+
+        html,
+        body {
+            height: 100%;
+            width: 100%;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            overscroll-behavior-y: none;
+            background-color: #000;
+        }
+
+        body {
+            color: var(--text-color);
+            font-family: 'Inter', sans-serif;
+        }
+
+        .main-wrapper {
+            position: relative;
+            width: 100%;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* BACKGROUND PANELS */
+        .panel {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            clip-path: inset(100% 0% 0% 0%);
+            z-index: 1;
+            background: #000;
+            visibility: hidden;
+        }
+
+        .panel.active {
+            clip-path: inset(0% 0% 0% 0%);
+            z-index: 5;
+            visibility: visible;
+        }
+
+        .bg-container {
+            position: absolute;
+            top: -10%;
+            left: -10%;
+            width: 120%;
+            height: 120%;
+        }
+
+        .bg-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            filter: brightness(1);
+            will-change: transform, opacity;
+        }
+
+        /* TEXT LAYER */
+        .text-layer {
+            position: absolute;
+            top: 0;
+            left: 8%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            z-index: 10;
+            pointer-events: none;
+            text-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .project-title-wrap {
+            overflow: hidden;
+        }
+
+        .project-title {
+            font-size: clamp(3.5rem, 7vw, 6.5rem);
+            font-weight: 400;
+            line-height: 1.1;
+            margin: 0;
+            transform: translateY(110%);
+        }
+
+        .project-desc-wrap {
+            overflow: hidden;
+            margin-top: 20px;
+        }
+
+        .project-desc {
+            font-size: 1.1rem;
+            opacity: 0.8;
+            font-weight: 300;
+            transform: translateY(110%);
+        }
+
+        /* PERSISTENT FOREGROUND LAYER */
+        .foreground-layer {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 50;
+            pointer-events: none;
+        }
+
+        .image-card-container {
+            position: relative;
+            width: 380px;
+            height: 520px;
+            pointer-events: auto;
+            border-radius: 0;
+            /* Removed border radius */
+            overflow: hidden;
+            background: #000;
+            border: none;
+            /* Removed all borders */
+        }
+
+        .card-image-stack {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        .card-img {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            clip-path: inset(100% 0% 0% 0%);
+            z-index: 1;
+            will-change: clip-path, transform;
+            border-radius: 0;
+        }
+
+        .card-img.visible {
+            clip-path: inset(0% 0% 0% 0%);
+            z-index: 2;
+        }
+
+        @media (max-width: 900px) {
+            .text-layer {
+                left: 50%;
+                transform: translateX(-50%);
+                text-align: center;
+                top: 60%;
+            }
+
+            .image-card-container {
+                width: 260px;
+                height: 360px;
+                transform: translateY(-80px);
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="foreground-layer">
+        <div class="image-card-container" id="mainCard">
+            <div class="card-image-stack" id="imageStack">
+                <!-- Populated via script -->
+            </div>
+        </div>
+    </div>
+
+    <div class="main-wrapper" id="mainWrapper">
+        <section class="panel active" id="p0"
+            data-card="https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=800">
+            <div class="bg-container">
+                <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=1200" class="bg-image">
+            </div>
+            <div class="text-layer">
+                <div class="text-content">
+                    <div class="project-title-wrap">
+                        <h1 class="project-title">Ali Ali</h1>
+                    </div>
+                    <div class="project-desc-wrap">
+                        <p class="project-desc">Unique director's portfolio</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="panel" id="p1"
+            data-card="https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?q=80&w=800">
+            <div class="bg-container">
+                <img src="https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?q=80&w=1200" class="bg-image">
+            </div>
+            <div class="text-layer">
+                <div class="text-content">
+                    <div class="project-title-wrap">
+                        <h1 class="project-title">Stock Dutch</h1>
+                    </div>
+                    <div class="project-desc-wrap">
+                        <p class="project-desc">Daring colours & patterns</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="panel" id="p2"
+            data-card="https://images.unsplash.com/photo-1518780664697-55e3ad937233?q=80&w=800">
+            <div class="bg-container">
+                <img src="https://images.unsplash.com/photo-1518780664697-55e3ad937233?q=80&w=1200" class="bg-image">
+            </div>
+            <div class="text-layer">
+                <div class="text-content">
+                    <div class="project-title-wrap">
+                        <h1 class="project-title">St. Regis</h1>
+                    </div>
+                    <div class="project-desc-wrap">
+                        <p class="project-desc">Elegant one-page solution</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+        <section class="panel" id="p4"
+            data-card="https://images.unsplash.com/photo-1616137422495-1e9e46e2aa77?q=80&w=800">
+            <div class="bg-container">
+                <img src="https://images.unsplash.com/photo-1616137422495-1e9e46e2aa77?q=80&w=1200" class="bg-image">
+            </div>
+            <div class="text-layer">
+                <div class="text-content">
+                    <div class="project-title-wrap">
+                        <h1 class="project-title">Aebele Interiors</h1>
+                    </div>
+                    <div class="project-desc-wrap">
+                        <p class="project-desc">Luxurious design experience</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="panel" id="p5"
+            data-card="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=800">
+            <div class="bg-container">
+                <img src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=1200" class="bg-image">
+            </div>
+            <div class="text-layer">
+                <div class="text-content">
+                    <div class="project-title-wrap">
+                        <h1 class="project-title">Columbia</h1>
+                    </div>
+                    <div class="project-desc-wrap">
+                        <p class="project-desc">A cinematic visual journey</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="panel" id="p6"
+            data-card="https://images.unsplash.com/photo-1497215728101-856f4ea42174?q=80&w=800">
+            <div class="bg-container">
+                <img src="https://images.unsplash.com/photo-1497215728101-856f4ea42174?q=80&w=1200" class="bg-image">
+            </div>
+            <div class="text-layer">
+                <div class="text-content">
+                    <div class="project-title-wrap">
+                        <h1 class="project-title">Studio Dzo</h1>
+                    </div>
+                    <div class="project-desc-wrap">
+                        <p class="project-desc">Creative brand expression</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const panels = gsap.utils.toArray(".panel");
+            const imageStack = document.getElementById('imageStack');
+            let currentIndex = 0;
+            let isAnimating = false;
+
+            // 1. Initialize FG Image Stack
+            panels.forEach((panel, i) => {
+                const img = document.createElement('img');
+                img.src = panel.dataset.card;
+                img.className = `card-img ${i === 0 ? 'visible' : ''}`;
+                img.id = `card-img-${i}`;
+                if (i === 0) gsap.set(img, { clipPath: "inset(0% 0% 0% 0%)", zIndex: 5 });
+                imageStack.appendChild(img);
+            });
+
+            // 2. Initial State Reset
+            const init = () => {
+                const p = panels[0];
+                gsap.set(p.querySelector('.project-title'), { y: "0%" });
+                gsap.set(p.querySelector('.project-desc'), { y: "0%" });
+                gsap.set(p, { clipPath: "inset(0% 0% 0% 0%)", zIndex: 10, visibility: 'visible' });
+            };
+            init();
+
+            const gotoSection = (index, direction) => {
+                if (isAnimating || index === currentIndex) return;
+
+                isAnimating = true;
+                const prevPanel = panels[currentIndex];
+                const nextPanel = panels[index];
+
+                const nextTitle = nextPanel.querySelector('.project-title');
+                const nextDesc = nextPanel.querySelector('.project-desc');
+                const nextBg = nextPanel.querySelector('.bg-image');
+                const prevBg = prevPanel.querySelector('.bg-image');
+
+                const nextCardImg = document.getElementById(`card-img-${index}`);
+                const prevCardImg = document.getElementById(`card-img-${currentIndex}`);
+
+                const duration = 1.3;
+                const ease = "expo.out";
+
+                gsap.set(nextBg, { opacity: 1, scale: 1.1 });
+
+                gsap.set(nextPanel, {
+                    visibility: 'visible',
+                    zIndex: 20,
+                    clipPath: direction === "down" ? "inset(100% 0% 0% 0%)" : "inset(0% 0% 100% 0%)"
+                });
+
+                const fgStartClip = direction === "down" ? "inset(0% 0% 100% 0%)" : "inset(100% 0% 0% 0%)";
+                gsap.set(nextCardImg, {
+                    zIndex: 20,
+                    clipPath: fgStartClip,
+                    scale: 1.15
+                });
+
+                nextPanel.classList.add('active');
+
+                const tl = gsap.timeline({
+                    onComplete: () => {
+                        panels.forEach((p, idx) => {
+                            if (idx !== index) {
+                                const bg = p.querySelector('.bg-image');
+                                p.classList.remove('active');
+                                gsap.set(p, { zIndex: 1, clipPath: "inset(100% 0% 0% 0%)", visibility: 'hidden' });
+                                gsap.set(document.getElementById(`card-img-${idx}`), { zIndex: 1, clipPath: "inset(100% 0% 0% 0%)" });
+                                gsap.set(bg, { opacity: 1, scale: 1.1 });
+                            }
+                        });
+
+                        gsap.set(nextPanel, { zIndex: 10 });
+                        gsap.set(nextCardImg, { zIndex: 10 });
+
+                        currentIndex = index;
+                        isAnimating = false;
+                    }
+                });
+
+                tl.to(nextPanel, { clipPath: "inset(0% 0% 0% 0%)", duration, ease }, 0);
+                tl.to(nextCardImg, { clipPath: "inset(0% 0% 0% 0%)", scale: 1, duration, ease }, 0);
+                tl.to(nextBg, { scale: 1, duration: duration + 0.2, ease: "power2.out" }, 0);
+                tl.to(prevBg, { scale: 1.1, opacity: 0.5, duration, ease }, 0);
+
+                const prevFgExitClip = direction === "down" ? "inset(100% 0% 0% 0%)" : "inset(0% 0% 100% 0%)";
+                tl.to(prevCardImg, { clipPath: prevFgExitClip, scale: 0.9, duration, ease }, 0);
+
+                tl.fromTo(nextTitle, { y: "110%" }, { y: "0%", duration: duration * 0.8, ease: "power4.out" }, 0.3);
+                tl.fromTo(nextDesc, { y: "110%" }, { y: "0%", duration: duration * 0.8, ease: "power4.out" }, 0.4);
+
+                tl.to(prevPanel.querySelector('.text-content'), {
+                    opacity: 0,
+                    y: direction === "down" ? -40 : 40,
+                    duration: 0.7,
+                    ease: "power2.inOut"
+                }, 0);
+
+                tl.set(prevPanel.querySelector('.text-content'), { opacity: 1, y: 0 });
+            };
+
+            let lastScrollTime = 0;
+            const scrollDelay = 1100;
+
+            window.addEventListener("wheel", (e) => {
+                const now = Date.now();
+                if (now - lastScrollTime < scrollDelay || isAnimating) return;
+
+                if (Math.abs(e.deltaY) < 20) return;
+
+                if (e.deltaY > 0) {
+                    const nextIndex = (currentIndex + 1) % panels.length;
+                    gotoSection(nextIndex, "down");
+                } else {
+                    const nextIndex = (currentIndex - 1 + panels.length) % panels.length;
+                    gotoSection(nextIndex, "up");
+                }
+                lastScrollTime = now;
+            }, { passive: true });
+
+            let touchY = 0;
+            window.addEventListener("touchstart", (e) => touchY = e.touches[0].clientY);
+            window.addEventListener("touchend", (e) => {
+                const now = Date.now();
+                if (now - lastScrollTime < scrollDelay || isAnimating) return;
+
+                const diff = touchY - e.changedTouches[0].clientY;
+                if (Math.abs(diff) < 40) return;
+
+                if (diff > 0) {
+                    const nextIndex = (currentIndex + 1) % panels.length;
+                    gotoSection(nextIndex, "down");
+                } else {
+                    const nextIndex = (currentIndex - 1 + panels.length) % panels.length;
+                    gotoSection(nextIndex, "up");
+                }
+                lastScrollTime = now;
+            });
+        });
+    </script>
+</body>
+
+</html>
