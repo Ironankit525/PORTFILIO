@@ -14,6 +14,14 @@ document.addEventListener("DOMContentLoaded", () => {
     // 2. Setup Elements
     const container = document.querySelector(".container");
     const homeContent = document.querySelector(".home-content");
+    const originPage = document.querySelector(".origin-page");
+    const officePage = document.querySelector(".office-page");
+    const connectPage = document.querySelector(".connect-page");
+
+    // Safety Reset: Ensure everything is visible on load and sub-pages are hidden
+    gsap.set([container, homeContent], { opacity: 1, visibility: "visible", display: "block", clearProps: "all" });
+    gsap.set([originPage, officePage, connectPage], { opacity: 0, visibility: "hidden", display: "none" });
+
     const menuOpen = document.getElementById("menu-open");
     const menuToggle = document.querySelector(".menu-toggle");
     const menuOverlay = document.querySelector(".menu-overlay");
@@ -32,7 +40,6 @@ document.addEventListener("DOMContentLoaded", () => {
     const menuOpenText = document.querySelector("#menu-open");
 
     // Origin Page Logic Vars
-    const originPage = document.querySelector(".origin-page");
     const originPanels = gsap.utils.toArray(".origin-panel");
     const originImageStack = document.getElementById('imageStack');
     let originCurrentIndex = 0;
@@ -40,12 +47,10 @@ document.addEventListener("DOMContentLoaded", () => {
     let isOriginVisible = false;
 
     // Connect Page Logic
-    const connectPage = document.querySelector(".connect-page");
     const connectLink = document.getElementById("connect-link");
     let isConnectVisible = false;
 
     // Office Page Logic
-    const officePage = document.querySelector(".office-page");
     const officeLink = document.getElementById("office-link");
     let isOfficeVisible = false;
 
@@ -71,6 +76,72 @@ document.addEventListener("DOMContentLoaded", () => {
     }
     requestAnimationFrame(raf);
 
+    function splitTextToLines(element) {
+        if (!element) return;
+        const text = element.textContent;
+        element.innerHTML = "";
+
+        // 1. Create temporary spans for each word to measure their positions
+        const words = text.split(/\s+/);
+        const tempContainer = document.createElement("div");
+        tempContainer.style.visibility = "hidden";
+        tempContainer.style.position = "absolute";
+        tempContainer.style.width = element.offsetWidth + "px";
+        element.appendChild(tempContainer);
+
+        const tempSpans = words.map(word => {
+            const span = document.createElement("span");
+            span.textContent = word + " ";
+            span.style.display = "inline-block";
+            tempContainer.appendChild(span);
+            return span;
+        });
+
+        // 2. Group these spans by their vertical offset to find lines
+        const lines = [];
+        let currentLine = [];
+        let currentY = -1;
+
+        tempSpans.forEach(span => {
+            const y = span.offsetTop;
+            if (y !== currentY) {
+                if (currentLine.length > 0) lines.push(currentLine);
+                currentLine = [];
+                currentY = y;
+            }
+            currentLine.push(span.textContent);
+        });
+        if (currentLine.length > 0) lines.push(currentLine);
+
+        element.removeChild(tempContainer);
+
+        // 3. Reconstruct HTML with line containers
+        lines.forEach(lineWords => {
+            const mask = document.createElement("div");
+            mask.className = "origin-line-mask";
+
+            const lineSpan = document.createElement("span");
+            lineSpan.className = "origin-line";
+            lineSpan.textContent = lineWords.join("");
+
+            mask.appendChild(lineSpan);
+            element.appendChild(mask);
+        });
+    }
+
+    function resetOriginText(panel) {
+        const title = panel.querySelector('.origin-project-title');
+        const desc = panel.querySelector('.origin-project-desc');
+        const lines = desc ? desc.querySelectorAll('.origin-line') : [];
+
+        if (title) gsap.set(title, { y: 0, opacity: 1, clearProps: "transform" });
+        if (desc) gsap.set(desc, { y: 0, opacity: 1, clearProps: "transform" });
+
+        if (lines.length > 0) {
+            gsap.set(lines, { y: 0, opacity: 1, clearProps: "transform" });
+        }
+    }
+
     // 5. Origin Slider Initialization
     function initOrigin() {
         if (!originImageStack) return;
@@ -82,12 +153,15 @@ document.addEventListener("DOMContentLoaded", () => {
             img.id = `origin-card-img-${i}`;
             if (i === 0) gsap.set(img, { clipPath: "inset(0% 0% 0% 0%)", zIndex: 5 });
             originImageStack.appendChild(img);
+
+            // Split desc text into lines for animation
+            const desc = panel.querySelector('.origin-project-desc');
+            if (desc) splitTextToLines(desc);
         });
 
         // Reset first panel text
         const p0 = originPanels[0];
-        gsap.set(p0.querySelector('.origin-project-title'), { y: "0%" });
-        gsap.set(p0.querySelector('.origin-project-desc'), { y: "0%" });
+        resetOriginText(p0);
         gsap.set(p0, { clipPath: "inset(0% 0% 0% 0%)", zIndex: 10, visibility: 'visible' });
     }
     initOrigin();
@@ -136,6 +210,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
         nextPanel.classList.add('active');
 
+        // Capture current elements for cleanup in onComplete
+        const currentTitle = prevPanel.querySelector('.origin-project-title');
+        const currentDesc = prevPanel.querySelector('.origin-project-desc');
+        const currentLines = currentDesc ? currentDesc.querySelectorAll('.origin-line') : [];
+
         const tl = gsap.timeline({
             onComplete: () => {
                 originPanels.forEach((p, idx) => {
@@ -153,6 +232,19 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 originCurrentIndex = index;
                 originIsAnimating = false;
+
+                // Final safety reveal for the new panel text
+                if (nextTitle) gsap.set(nextTitle, { y: 0, opacity: 1, clearProps: "transform" });
+                if (nextDesc) gsap.set(nextDesc, { y: 0, opacity: 1, clearProps: "transform" });
+                const finalLines = nextDesc ? nextDesc.querySelectorAll('.origin-line') : [];
+                if (finalLines.length > 0) gsap.set(finalLines, { y: 0, opacity: 1, clearProps: "transform" });
+
+                // Cleanup prev panel text state AFTER animation finishes
+                const itemsToReset = [];
+                if (currentTitle) itemsToReset.push(currentTitle);
+                if (currentDesc) itemsToReset.push(currentDesc);
+                if (itemsToReset.length > 0) gsap.set(itemsToReset, { y: 0, opacity: 1, clearProps: "transform" });
+                if (currentLines && currentLines.length > 0) gsap.set(currentLines, { y: 0, opacity: 1, clearProps: "transform" });
             }
         });
 
@@ -163,17 +255,45 @@ document.addEventListener("DOMContentLoaded", () => {
 
         // Previous card remains static behind while the next card reveals over it
 
-        tl.fromTo(nextTitle, { y: "110%" }, { y: "0%", duration: duration * 0.8, ease: "power4.out" }, 0.3);
-        tl.fromTo(nextDesc, { y: "110%" }, { y: "0%", duration: duration * 0.8, ease: "power4.out" }, 0.4);
-
-        tl.to(prevPanel.querySelector('.origin-text-content'), {
-            opacity: 0,
-            y: direction === "down" ? -40 : 40,
-            duration: 0.7,
-            ease: "power2.inOut"
+        // Exit animation for current panel text (Dramatic Parallax)
+        tl.to(currentTitle, {
+            y: direction === "down" ? -window.innerHeight * 1.5 : window.innerHeight * 1.5,
+            duration: 1,
+            ease: "power2.in"
         }, 0);
 
-        tl.set(prevPanel.querySelector('.origin-text-content'), { opacity: 1, y: 0 });
+        if (currentLines.length > 0) {
+            tl.to(currentLines, {
+                y: direction === "down" ? -window.innerHeight * 0.5 : window.innerHeight * 0.5,
+                duration: 0.8,
+                ease: "power2.in",
+                stagger: 0.05
+            }, 0.1);
+        } else if (currentDesc) {
+            tl.to(currentDesc, {
+                y: direction === "down" ? -window.innerHeight * 1.2 : window.innerHeight * 1.2,
+                duration: 0.8,
+                ease: "power2.in"
+            }, 0.1);
+        }
+
+        // Entry animation for next panel text
+        // Ensure parents are reset so word animations are visible
+        if (nextTitle) gsap.set(nextTitle, { y: 0, opacity: 1, clearProps: "transform" });
+        if (nextDesc) gsap.set(nextDesc, { y: 0, opacity: 1, clearProps: "transform" });
+
+        tl.fromTo(nextTitle, { y: direction === "down" ? "100%" : "-100%" }, { y: "0%", duration: duration * 1, ease: "power4.out" }, 0.2);
+
+        const nextLines = nextDesc ? nextDesc.querySelectorAll('.origin-line') : [];
+        if (nextLines.length > 0) {
+            tl.fromTo(nextLines,
+                { opacity: 0, y: direction === "down" ? "100%" : "-100%" },
+                { opacity: 1, y: "0%", duration: 0.8, ease: "power3.out", stagger: 0.1 },
+                0.35
+            );
+        } else if (nextDesc) {
+            tl.fromTo(nextDesc, { y: direction === "down" ? "100%" : "-100%" }, { y: "0%", duration: duration * 0.8, ease: "power4.out" }, 0.4);
+        }
     }
 
     let lastScrollTime = 0;
@@ -197,7 +317,23 @@ document.addEventListener("DOMContentLoaded", () => {
         lastScrollTime = now;
     }, { passive: true });
 
-    // 6. Menu Interactions
+    // Handle window resize to re-calculate lines
+    let resizeTimer;
+    window.addEventListener('resize', () => {
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(() => {
+            if (isOriginVisible) {
+                originPanels.forEach(panel => {
+                    const desc = panel.querySelector('.origin-project-desc');
+                    if (desc) {
+                        splitTextToLines(desc);
+                        resetOriginText(panel);
+                    }
+                });
+            }
+        }, 250);
+    });
+
     if (menuToggle) {
         menuToggle.addEventListener("click", () => {
             if (isOpen) {
@@ -675,13 +811,13 @@ document.addEventListener("DOMContentLoaded", () => {
         // Black Page Text Fade In
         const blackPageText = document.querySelector(".black-page-content h2 span");
         if (blackPageText) {
-            gsap.to(blackPageText, {
+            gsap.from(blackPageText, {
                 scrollTrigger: {
                     trigger: ".black-page",
                     start: "top 60%", // Start animation when black page is near center
                     toggleActions: "play none none reverse"
                 },
-                y: 0,
+                y: "110%",
                 duration: 1.5,
                 ease: "power4.out"
             });
@@ -690,13 +826,13 @@ document.addEventListener("DOMContentLoaded", () => {
         // Projects Heading Text Fade In
         const projectsText = document.querySelector(".projects-heading h2 span");
         if (projectsText) {
-            gsap.to(projectsText, {
+            gsap.from(projectsText, {
                 scrollTrigger: {
                     trigger: ".projects-heading",
                     start: "top 75%", // Start animation when element is in view
                     toggleActions: "play none none reverse"
                 },
-                y: 0,
+                y: "110%",
                 duration: 1.5,
                 ease: "power4.out"
             });

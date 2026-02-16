@@ -525,13 +525,64 @@ html.lenis body {
 .origin-text-layer {
     position: absolute;
     top: 0;
-    left: 8%;
+    left: 0;
+    width: 100%;
     height: 100%;
     display: flex;
     align-items: center;
+    justify-content: center;
+    /* Center content to use absolute positioning from center */
     z-index: 10;
     pointer-events: none;
-    text-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    text-shadow: none;
+}
+
+.origin-text-content {
+    background: transparent;
+    padding: 0;
+    border: none;
+    width: 400px;
+    /* Fixed width for consistency */
+    max-width: 90%;
+    box-shadow: none;
+
+    /* Absolute positioning relative to center */
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    /* Default (Left Side) - P0, P2, P5 */
+    right: calc(50% + 220px);
+    /* 190px (half img) + 30px gap */
+    left: auto;
+    text-align: right;
+
+    /* Default Text align inside box for left-positioned boxes */
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+}
+
+/* Right Side - P1, P4 */
+#p1 .origin-text-content,
+#p4 .origin-text-content {
+    left: calc(50% + 220px);
+    /* 190px + 30px gap */
+    right: auto;
+    text-align: left;
+    align-items: flex-start;
+}
+
+#p1 .origin-project-title-wrap,
+#p4 .origin-project-title-wrap,
+#p1 .origin-project-desc-wrap,
+#p4 .origin-project-desc-wrap {
+    align-items: flex-start;
+}
+
+/* Ensure title and desc align with the flex col setting */
+.origin-project-title-wrap,
+.origin-project-desc-wrap {
+    width: 100%;
 }
 
 .origin-project-title-wrap {
@@ -543,7 +594,6 @@ html.lenis body {
     font-weight: 400;
     line-height: 1.1;
     margin: 0;
-    transform: translateY(110%);
     color: #fff;
 }
 
@@ -553,11 +603,12 @@ html.lenis body {
 }
 
 .origin-project-desc {
-    font-size: 1.1rem;
-    opacity: 0.8;
-    font-weight: 300;
-    transform: translateY(110%);
+    font-size: clamp(1.2rem, 3vw, 1.8rem);
+    line-height: 1.2;
+    opacity: 0.9;
+    font-weight: 200;
     color: #fff;
+    margin: 0;
 }
 
 .origin-foreground-layer {
@@ -573,6 +624,8 @@ html.lenis body {
     pointer-events: none;
 }
 
+/* Fixed missing brace */
+
 .origin-image-card-container {
     position: relative;
     width: 380px;
@@ -581,6 +634,46 @@ html.lenis body {
     border-radius: 0;
     overflow: hidden;
     background: #000;
+}
+
+@media (max-width: 900px) {
+    .origin-text-layer {
+        left: 0;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: flex-end;
+        padding-bottom: 10vh;
+    }
+
+    .origin-text-content,
+    #p1 .origin-text-content,
+    #p4 .origin-text-content {
+        position: relative;
+        left: auto;
+        right: auto;
+        top: auto;
+        transform: translateY(0);
+        width: 90%;
+        max-width: 90%;
+        margin-bottom: 20px;
+        text-align: center;
+        align-items: center;
+    }
+
+    #p1 .origin-project-title-wrap,
+    #p4 .origin-project-title-wrap,
+    #p1 .origin-project-desc-wrap,
+    #p4 .origin-project-desc-wrap {
+        align-items: center;
+    }
+
+    .origin-image-card-container {
+        width: 260px;
+        height: 360px;
+        transform: translateY(-50px);
+    }
 }
 
 .origin-card-image-stack {
@@ -609,17 +702,46 @@ html.lenis body {
 }
 
 @media (max-width: 900px) {
-    .origin-text-layer {
-        left: 50%;
-        transform: translateX(-50%);
+
+    /* Reset positioning for mobile to center */
+    .origin-text-layer,
+    #p1 .origin-text-layer,
+    #p4 .origin-text-layer {
+        left: 0;
+        right: 0;
+        width: 100%;
         text-align: center;
-        top: 60%;
+        align-items: flex-end;
+        justify-content: center;
+        padding-bottom: 10vh;
+        display: flex;
+    }
+
+    /* Override absolute positioning for mobile */
+    .origin-text-content,
+    #p1 .origin-text-content,
+    #p4 .origin-text-content {
+        position: relative;
+        left: auto;
+        right: auto;
+        top: auto;
+        transform: translateY(0);
+        margin-bottom: 20vh;
+        width: 90%;
+        max-width: 90%;
+    }
+
+    #p1 .origin-project-title-wrap,
+    #p4 .origin-project-title-wrap,
+    #p1 .origin-project-desc-wrap,
+    #p4 .origin-project-desc-wrap {
+        align-items: center;
     }
 
     .origin-image-card-container {
         width: 260px;
         height: 360px;
-        transform: translateY(-80px);
+        transform: translateY(-50px);
     }
 }
 
@@ -891,7 +1013,7 @@ html.lenis body {
     justify-content: flex-start;
     align-items: flex-start;
     min-height: 100vh;
-    padding: 15vh 8% 10vh 8%;
+    padding: 15vh 8% 10vh calc(8% - 80px);
     width: 100%;
     color: white;
     animation: fadeIn 1.2s ease-out;
@@ -904,13 +1026,13 @@ html.lenis body {
     margin-bottom: 20px;
     font-family: 'TWK Lausanne', sans-serif, 'Inter';
     line-height: 0.9;
-    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+    text-shadow: none;
     color: white;
 }
 
 .office-title span {
-    display: block;
-    color: black;
+    display: inline-block;
+    color: white;
 }
 
 .office-nav-hint {
@@ -927,13 +1049,14 @@ html.lenis body {
 .office-content-block {
     max-width: 600px;
     line-height: 1.6;
-    font-size: 18px;
+    font-size: 1.5rem;
     color: rgba(255, 255, 255, 0.8);
     margin-bottom: 40px;
     text-shadow: 0 1px 8px rgba(0, 0, 0, 0.4);
 }
 
 .office-content-block p {
+    font-size: 1.5rem;
     margin-bottom: 25px;
 }
 
@@ -983,7 +1106,6 @@ html.lenis body {
 
 .black-page-content h2 span {
     display: inline-block;
-    transform: translateY(110%);
     will-change: transform;
 }
 
@@ -1079,7 +1201,6 @@ html.lenis body {
 
 .projects-heading h2 span {
     display: inline-block;
-    transform: translateY(110%);
     will-change: transform;
 }
 
@@ -1201,6 +1322,25 @@ html.lenis body {
         height: 280px;
     }
 }
+
+.word {
+    display: inline-block;
+    opacity: 1;
+    visibility: visible;
+    margin-right: 0.25em;
+}
+
+.origin-line-mask {
+    overflow: hidden;
+    display: block;
+    line-height: 1.2;
+}
+
+.origin-line {
+    display: inline-block;
+    will-change: transform, opacity;
+}
+
 
 .text-block {
     height: 80vh;

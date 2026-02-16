@@ -194,9 +194,9 @@
 
     <div class="main-wrapper" id="mainWrapper">
         <section class="panel active" id="p0"
-            data-card="https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=800">
+            data-card="origin/unwatermarked_Gemini_Generated_Image_y3h8v4y3h8v4y3h8.png">
             <div class="bg-container">
-                <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=1200" class="bg-image">
+                <img src="origin/unwatermarked_Gemini_Generated_Image_y3h8v4y3h8v4y3h8.png" class="bg-image">
             </div>
             <div class="text-layer">
                 <div class="text-content">
@@ -210,10 +210,9 @@
             </div>
         </section>
 
-        <section class="panel" id="p1"
-            data-card="https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?q=80&w=800">
+        <section class="panel" id="p1" data-card="origin/pexels-vovaflame-4199724.jpg">
             <div class="bg-container">
-                <img src="https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?q=80&w=1200" class="bg-image">
+                <img src="origin/pexels-vovaflame-4199724.jpg" class="bg-image">
             </div>
             <div class="text-layer">
                 <div class="text-content">
@@ -227,10 +226,9 @@
             </div>
         </section>
 
-        <section class="panel" id="p2"
-            data-card="https://images.unsplash.com/photo-1518780664697-55e3ad937233?q=80&w=800">
+        <section class="panel" id="p2" data-card="origin/1763645178267.jpeg">
             <div class="bg-container">
-                <img src="https://images.unsplash.com/photo-1518780664697-55e3ad937233?q=80&w=1200" class="bg-image">
+                <img src="origin/1763645178267.jpeg" class="bg-image">
             </div>
             <div class="text-layer">
                 <div class="text-content">
@@ -245,10 +243,9 @@
         </section>
 
 
-        <section class="panel" id="p4"
-            data-card="https://images.unsplash.com/photo-1616137422495-1e9e46e2aa77?q=80&w=800">
+        <section class="panel" id="p4" data-card="origin/unwatermarked_Gemini_Generated_Image_kjsriikjsriikjsr.png">
             <div class="bg-container">
-                <img src="https://images.unsplash.com/photo-1616137422495-1e9e46e2aa77?q=80&w=1200" class="bg-image">
+                <img src="origin/unwatermarked_Gemini_Generated_Image_kjsriikjsriikjsr.png" class="bg-image">
             </div>
             <div class="text-layer">
                 <div class="text-content">
@@ -262,10 +259,9 @@
             </div>
         </section>
 
-        <section class="panel" id="p5"
-            data-card="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=800">
+        <section class="panel" id="p5" data-card="origin/unwatermarked_Gemini_Generated_Image_c2w2vgc2w2vgc2w2.png">
             <div class="bg-container">
-                <img src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=1200" class="bg-image">
+                <img src="origin/unwatermarked_Gemini_Generated_Image_c2w2vgc2w2vgc2w2.png" class="bg-image">
             </div>
             <div class="text-layer">
                 <div class="text-content">
@@ -389,14 +385,24 @@
                 tl.fromTo(nextTitle, { y: "110%" }, { y: "0%", duration: duration * 0.8, ease: "power4.out" }, 0.3);
                 tl.fromTo(nextDesc, { y: "110%" }, { y: "0%", duration: duration * 0.8, ease: "power4.out" }, 0.4);
 
-                tl.to(prevPanel.querySelector('.text-content'), {
-                    opacity: 0,
-                    y: direction === "down" ? -40 : 40,
-                    duration: 0.7,
-                    ease: "power2.inOut"
+                // Dramatic Parallax Exit
+                const currentTitle = prevPanel.querySelector('.project-title');
+                const currentDesc = prevPanel.querySelector('.project-desc');
+
+                tl.to(currentTitle, {
+                    y: direction === "down" ? -window.innerHeight * 1.5 : window.innerHeight * 1.5,
+                    duration: 1,
+                    ease: "power2.in"
                 }, 0);
 
-                tl.set(prevPanel.querySelector('.text-content'), { opacity: 1, y: 0 });
+                tl.to(currentDesc, {
+                    y: direction === "down" ? -window.innerHeight * 1.2 : window.innerHeight * 1.2,
+                    duration: 0.8,
+                    ease: "power2.in"
+                }, 0.1);
+
+                // Reset for next time (after exit complete)
+                tl.set([currentTitle, currentDesc], { y: 0, opacity: 1 }); // Opacity handled by parent clip/visibility usually, but ensuring reset
             };
 
             let lastScrollTime = 0;
