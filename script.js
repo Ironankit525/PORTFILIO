@@ -200,7 +200,13 @@ document.addEventListener("DOMContentLoaded", () => {
     // 6. Menu Interactions
     if (menuToggle) {
         menuToggle.addEventListener("click", () => {
-            if (isOpen) closeMenu();
+            if (isOpen) {
+                let target = "home";
+                if (isOriginVisible) target = "origin";
+                else if (isConnectVisible) target = "connect";
+                else if (isOfficeVisible) target = "office";
+                closeMenu(target);
+            }
             else openMenu();
         });
     }
@@ -681,6 +687,21 @@ document.addEventListener("DOMContentLoaded", () => {
             });
         }
 
+        // Projects Heading Text Fade In
+        const projectsText = document.querySelector(".projects-heading h2 span");
+        if (projectsText) {
+            gsap.to(projectsText, {
+                scrollTrigger: {
+                    trigger: ".projects-heading",
+                    start: "top 75%", // Start animation when element is in view
+                    toggleActions: "play none none reverse"
+                },
+                y: 0,
+                duration: 1.5,
+                ease: "power4.out"
+            });
+        }
+
         // Scroll Sequence Logic (Scrubbing)
         const textBlocks = gsap.utils.toArray(".text-block");
         const images = gsap.utils.toArray(".sticky-image-frame .seq-img");
@@ -696,8 +717,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 end: "top 25%",     // Lock in place when text is near top
                 scrub: 1,           // Dynamic scrub (1s lag for smoothness)
                 animation: gsap.fromTo(img,
-                    { x: window.innerWidth + 100 }, // Start off-screen right
-                    { x: 0, ease: "none" }          // Slide to docked position
+                    { x: window.innerWidth + 100, rotation: 0 }, // Start off-screen right
+                    { x: 0, rotation: (i % 2 === 0 ? 2 : -1.5), ease: "none" } // Slide to docked position with slight misalignment
                 )
             });
         });
@@ -720,7 +741,13 @@ document.addEventListener("DOMContentLoaded", () => {
                 indicatorBars.push(bar);
 
                 wrapper.addEventListener('click', () => {
-                    lenis.scrollTo(block, { offset: -window.innerHeight * 0.1 });
+                    if (i === 0) {
+                        lenis.scrollTo(0); // Top of page
+                    } else if (i === textBlocks.length - 1) {
+                        lenis.scrollTo(document.body.scrollHeight); // Bottom of page
+                    } else {
+                        lenis.scrollTo(block, { offset: -window.innerHeight * 0.1 });
+                    }
                 });
             });
         }
@@ -858,6 +885,24 @@ document.addEventListener("DOMContentLoaded", () => {
             form.addEventListener("submit", handleSubmit);
         }
         initConnectForm();
+
+        // Connect Page Mouse Interaction
+        window.addEventListener("mousemove", (e) => {
+            if (!isConnectVisible) return;
+
+            const connectBg = document.querySelector(".connect-background");
+            if (!connectBg) return;
+
+            const x = (e.clientX / window.innerWidth - 0.5) * 15; // Max movement 7.5px
+            const y = (e.clientY / window.innerHeight - 0.5) * 15;
+
+            gsap.to(connectBg, {
+                x: x,
+                y: y,
+                duration: 1,
+                ease: "power2.out"
+            });
+        });
     }
 
 });
@@ -865,15 +910,17 @@ document.addEventListener("DOMContentLoaded", () => {
 // --- Watch & Shop Carousel Integration ---
 (function initWatchShopCarousel() {
     const sliderData = [
-        { title: "Prismatic Shards", img: "./images/watch_shop/img1.png", url: "#" },
-        { title: "Brutalist Red", img: "./images/watch_shop/img2.png", url: "#" },
-        { title: "Liquid Chrome", img: "./images/watch_shop/img3.png", url: "#" },
-        { title: "Mechanical Heart", img: "./images/watch_shop/img4.png", url: "#" },
-        { title: "Prismatic Shards", img: "./images/watch_shop/img1.png", url: "#" },
-        { title: "Brutalist Red", img: "./images/watch_shop/img2.png", url: "#" },
-        { title: "Liquid Chrome", img: "./images/watch_shop/img3.png", url: "#" },
-        { title: "Mechanical Heart", img: "./images/watch_shop/img4.png", url: "#" },
-        { title: "Gemini Art", img: "./Gemini_Generated_Image_7gcx597gcx597gcx.png", url: "#" },
+        { title: "Prismatic Shards", img: "screenshort/Screenshot 2026-02-16 at 12.43.34 AM.png", url: "#" },
+        { title: "Brutalist Red", img: "screenshort/Screenshot 2026-02-15 at 2.56.38 AM.png", url: "#" },
+        { title: "Brutalist Red", img: "screenshort/Screenshot 2026-02-16 at 1.06.28 AM.png", url: "#" },
+        // { title: "Liquid Chrome", img: "screenshort/Screenshot 2026-02-15 at 2.57.08 AM.png", url: "#" },
+        { title: "Mechanical Heart", img: "screenshort/Screenshot 2026-02-15 at 2.56.49 AM.png", url: "#" },
+        // { title: "Mechanical Heart", img: "screenshort/Screenshot 2026-02-15 at 2.56.49 AM.png", url: "#" },
+        // { title: "Prismatic Shards", img: "./images/watch_shop/img1.png", url: "#" },
+        // { title: "Brutalist Red", img: "./images/watch_shop/img2.png", url: "#" },
+        //{ title: "Liquid Chrome", img: "./images/watch_shop/img3.png", url: "#" },
+        //{ title: "Mechanical Heart", img: "./images/watch_shop/img4.png", url: "#" },
+        //{ title: "Gemini Art", img: "./Gemini_Generated_Image_7gcx597gcx597gcx.png", url: "#" },
     ];
 
     const config = {
@@ -895,7 +942,7 @@ document.addEventListener("DOMContentLoaded", () => {
     function createSlideElement(index) {
         const slide = document.createElement("div");
         slide.className = "ws-slide";
-        if (state.isMobile) { slide.style.width = "175px"; slide.style.height = "250px"; }
+        if (state.isMobile) { slide.style.width = "200px"; slide.style.height = "280px"; }
 
         const imageContainer = document.createElement("div");
         imageContainer.className = "ws-slide-image";
@@ -938,7 +985,13 @@ document.addEventListener("DOMContentLoaded", () => {
         track.innerHTML = "";
         state.slides = [];
         checkMobile();
-        state.slideWidth = state.isMobile ? 215 : 430;
+        // Desktop: 500px width + 50px margin (25 left + 25 right) = 550
+        // Mobile: 200px width + 20px margin (10 left + 10 right - assumed from CSS or default) = 220 
+        // Note: CSS mobile media query doesn't specify margin, so it inherits 25px from desktop unless overridden.
+        // Let's verify CSS margin inheritance. The media query only updated width/height. 
+        // So mobile margin is still 25px. 
+        // Mobile width 200 + 50 = 250.
+        state.slideWidth = state.isMobile ? 250 : 550;
 
         const copies = 6;
         const totalSlides = totalSlideCount * copies;
@@ -1068,6 +1121,79 @@ document.addEventListener("DOMContentLoaded", () => {
         animate();
         if (typeof ScrollTrigger !== "undefined") {
             ScrollTrigger.refresh();
+        }
+
+        // --- Social Icon Animations ---
+
+        // 1. GitHub Lottie
+        const githubContainer = document.getElementById('lottie-github');
+        const githubLink = document.getElementById('github-link');
+        if (githubContainer && typeof lottie !== 'undefined') {
+            const githubAnim = lottie.loadAnimation({
+                container: githubContainer,
+                renderer: 'svg',
+                loop: true,
+                autoplay: false,
+                path: './images/github.json'
+            });
+
+            // Ensure white stroke when loaded
+            githubAnim.addEventListener('DOMLoaded', () => {
+                const paths = githubContainer.querySelectorAll('path');
+                paths.forEach(p => {
+                    p.setAttribute('stroke', '#ffffff');
+                    p.setAttribute('stroke-width', '2');
+                    p.setAttribute('fill', 'none');
+                });
+            });
+
+            if (githubLink) {
+                githubLink.addEventListener('mouseenter', () => githubAnim.play());
+                githubLink.addEventListener('mouseleave', () => githubAnim.stop());
+            }
+        }
+
+        // 2. LinkedIn Lottie
+        const linkedinContainer = document.getElementById('lottie-linkedin');
+        const linkedinLink = document.getElementById('linkedin-link');
+        if (linkedinContainer && typeof lottie !== 'undefined') {
+            const linkedinAnim = lottie.loadAnimation({
+                container: linkedinContainer,
+                renderer: 'svg',
+                loop: true,
+                autoplay: false,
+                path: './images/linkedin.json'
+            });
+
+            // Ensure white stroke when loaded
+            linkedinAnim.addEventListener('DOMLoaded', () => {
+                const paths = linkedinContainer.querySelectorAll('path');
+                paths.forEach(p => {
+                    p.setAttribute('stroke', '#ffffff');
+                    p.setAttribute('stroke-width', '2');
+                    p.setAttribute('fill', 'none');
+                });
+            });
+
+            if (linkedinLink) {
+                linkedinLink.addEventListener('mouseenter', () => linkedinAnim.play());
+                linkedinLink.addEventListener('mouseleave', () => linkedinAnim.stop());
+            }
+        }
+
+        // 3. X (Twitter) GSAP
+        const xLink = document.getElementById('x-link');
+        const xIcon = document.querySelector('.x-icon-svg');
+
+        if (xLink && xIcon && typeof gsap !== 'undefined') {
+            const xAnim = gsap.timeline({ paused: true });
+            xAnim.to(xIcon, { scale: 1.2, duration: 0.1, ease: "power1.out" })
+                .to(xIcon, { rotation: -10, duration: 0.1 })
+                .to(xIcon, { rotation: 10, duration: 0.1 })
+                .to(xIcon, { rotation: -10, duration: 0.1 })
+                .to(xIcon, { rotation: 0, scale: 1, duration: 0.1 });
+
+            xLink.addEventListener('mouseenter', () => xAnim.restart());
         }
     }
 
