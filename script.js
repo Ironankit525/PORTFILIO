@@ -34,7 +34,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     let isOpen = false;
     let isAnimating = false;
-    let currentPreviewImg = "./images/1.png"; // Track current preview
+    let currentPreviewImg = "./images/1.webp"; // Track current preview
 
     // 3. Logo & Menu Color Logic
     const menuOpenText = document.querySelector("#menu-open");
@@ -359,9 +359,9 @@ document.addEventListener("DOMContentLoaded", () => {
     function resetPreviewImage() {
         menuPreviewImg.innerHTML = "";
         const defaultPreviewImg = document.createElement("img");
-        defaultPreviewImg.src = "./images/1.png";
+        defaultPreviewImg.src = "./images/1.webp";
         menuPreviewImg.appendChild(defaultPreviewImg);
-        currentPreviewImg = "./images/1.png";
+        currentPreviewImg = "./images/1.webp";
     }
 
     function animateMenuToggle(isOpening) {
@@ -1046,17 +1046,17 @@ document.addEventListener("DOMContentLoaded", () => {
 // --- Watch & Shop Carousel Integration ---
 (function initWatchShopCarousel() {
     const sliderData = [
-        { title: "Prismatic Shards", img: "screenshort/Screenshot 2026-02-16 at 12.43.34 AM.png", url: "#" },
-        { title: "Brutalist Red", img: "screenshort/Screenshot 2026-02-15 at 2.56.38 AM.png", url: "#" },
-        { title: "Brutalist Red", img: "screenshort/Screenshot 2026-02-16 at 1.06.28 AM.png", url: "#" },
-        // { title: "Liquid Chrome", img: "screenshort/Screenshot 2026-02-15 at 2.57.08 AM.png", url: "#" },
-        { title: "Mechanical Heart", img: "screenshort/Screenshot 2026-02-15 at 2.56.49 AM.png", url: "#" },
-        // { title: "Mechanical Heart", img: "screenshort/Screenshot 2026-02-15 at 2.56.49 AM.png", url: "#" },
-        // { title: "Prismatic Shards", img: "./images/watch_shop/img1.png", url: "#" },
-        // { title: "Brutalist Red", img: "./images/watch_shop/img2.png", url: "#" },
-        //{ title: "Liquid Chrome", img: "./images/watch_shop/img3.png", url: "#" },
-        //{ title: "Mechanical Heart", img: "./images/watch_shop/img4.png", url: "#" },
-        //{ title: "Gemini Art", img: "./Gemini_Generated_Image_7gcx597gcx597gcx.png", url: "#" },
+        { title: "Prismatic Shards", img: "screenshort/Screenshot 2026-02-16 at 12.43.34 AM.webp", url: "#" },
+        { title: "Brutalist Red", img: "screenshort/Screenshot 2026-02-15 at 2.56.38 AM.webp", url: "#" },
+        { title: "Brutalist Red", img: "screenshort/Screenshot 2026-02-16 at 1.06.28 AM.webp", url: "#" },
+        // { title: "Liquid Chrome", img: "screenshort/Screenshot 2026-02-15 at 2.57.08 AM.webp", url: "#" },
+        { title: "Mechanical Heart", img: "screenshort/Screenshot 2026-02-15 at 2.56.49 AM.webp", url: "#" },
+        // { title: "Mechanical Heart", img: "screenshort/Screenshot 2026-02-15 at 2.56.49 AM.webp", url: "#" },
+        // { title: "Prismatic Shards", img: "./images/watch_shop/img1.webp", url: "#" },
+        // { title: "Brutalist Red", img: "./images/watch_shop/img2.webp", url: "#" },
+        //{ title: "Liquid Chrome", img: "./images/watch_shop/img3.webp", url: "#" },
+        //{ title: "Mechanical Heart", img: "./images/watch_shop/img4.webp", url: "#" },
+        //{ title: "Gemini Art", img: "./Gemini_Generated_Image_7gcx597gcx597gcx.webp", url: "#" },
     ];
 
     const config = {
